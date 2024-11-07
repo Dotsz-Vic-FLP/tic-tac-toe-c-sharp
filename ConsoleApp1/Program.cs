@@ -1,15 +1,12 @@
-﻿using System.Drawing;
-using System.Collections.Generic;
+﻿
 
-static void main(string[] args)
-{ // entry point
-    App app = new App();
-    app.run();
-}
+App app = new App();
+app.Run();
 
-class App
+
+internal class App
 { // class to run the application
-    public void run()
+    public void Run()
     {
 
         Util.Print("Tic-Tac-Toe Game:", ConsoleColor.DarkBlue);
@@ -23,20 +20,41 @@ class App
         {
 
             Util.GenerateGrid(board);
-
-
-
+            
+            if(turn%2 == 0)
+            {
+                Util.Print("Player 2's turn (o)", ConsoleColor.DarkGreen);
+                
+                // call get input function
+                // update the board
+                // check for win condition
+                // check for draw condition
+                // increment turn
+                
+            }
+            else
+            {
+                Util.Print("Player 1's turn (x) ", ConsoleColor.DarkGreen);
+                // call get input function
+                // update the board
+                // check for win condition
+                // check for draw condition
+                // increment turn
+                
+            }
+            
+            
             // exit condition
             // System.Environment.Exit(0);
         }
 
     }
 
-
-    public static List<List<string>> InitializeList ()
+    
+    private static List<List<string>> InitializeList ()
     {
-        List<string> row = new List<string>();
-        List<List<string>> tikTakToe = new List<List<string>>();
+        List<string> row = [];
+        List<List<string>> tikTakToe = [[]];
         for(int i = 0; i <= 3; i++ )
         {
             row.Add(UI.BLANK);
@@ -49,6 +67,14 @@ class App
     }
 
 }
+
+
+
+/**
+ * UI class
+ * 
+ * This class contains all the UI elements
+ */
 class UI
 {
     /**
@@ -70,6 +96,11 @@ class UI
     public static readonly string BLANK = "_"; //Readonly string what is this??? // readonly means final; the value doesn't change
 }
 
+/**
+ * Util class
+ * 
+ * This class contains all the utility functions
+ */
 class Util
 {
     public static void Print(string message, ConsoleColor color)
@@ -94,11 +125,11 @@ class Util
                 Print(item);
             }
         }
+        
+        // return what?
+        return "";
     }
 }
 
-class getInput
-{
-    
-}
+
 
