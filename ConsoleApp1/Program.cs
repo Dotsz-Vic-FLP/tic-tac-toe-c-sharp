@@ -2,8 +2,7 @@
 // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
 // https://learn.microsoft.com/en-us/dotnet/csharp/how-to/parse-strings-using-split
 // https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.select?view=net-8.0
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
+
 
 App app = new App();
 app.Run();
@@ -11,118 +10,82 @@ app.Run();
 
 internal class App
 {
+    List<List<string>> gameBoard = new List<List<string>>()
+    {
+        new List<string> { UI.BLANK, UI.BLANK, UI.BLANK }, 
+        new List<string> { UI.BLANK, UI.BLANK, UI.BLANK }, 
+        new List<string> { UI.BLANK, UI.BLANK, UI.BLANK }
+    };
+    
     // class to run the application
     public void Run()
     {
-
         Util.Print("Tic-Tac-Toe Game:\n", ConsoleColor.DarkBlue);
+        
+        // gameBoard = InitializeGameBoard(gameBoard); // initialize the game board
 
-        // call the function to show the board
-        List<String> row = InitializeListString();
-        List<List<string>> board = InitializeGameBoard(row);
-
+        Util.Print(UI.GenerateBoard(gameBoard)); // show the board initially
+        
         int turn = 1;
         while (true)
         {
-
-            Util.Print(UI.GenerateBoard(board));
-
             if (turn % 2 == 0)
             {
-                Util.Print("Player 2's turn (o)\n Valid format(\'x,y\')", ConsoleColor.DarkGreen);
-
-                ValidateInput("O", board);
-                // call get input function
-                // update the board
-                // check for win condition
-                // check for draw condition
-                // increment turn
-
+                Util.Print("\n \nPlayer 2's turn (o)\nValid format(<x>,<y>)\n", ConsoleColor.DarkGreen);
+                (gameBoard, turn) = ValidateInput("O", gameBoard, turn); // returns an updated board and the current turn
+                Util.Print(UI.GenerateBoard(gameBoard)); // show the updated board
             }
             else
-            {
-                Util.Print("Player 1's turn (x)\n", ConsoleColor.DarkMagenta);
-                ValidateInput("X", board);
-                // update the board
-                // check for win condition
-                // check for draw condition
-                // increment turn
-
+            {   
+                Util.Print("\n \nPlayer 1's turn (x)\nValid format(<x>,<y>)\n", ConsoleColor.DarkMagenta);
+                (gameBoard, turn) = ValidateInput("X", gameBoard, turn); // returns an updated board and the current turn
+                Util.Print(UI.GenerateBoard(gameBoard)); // show the updated board
             }
-
-            if (turn > 9)
+            if (turn > 9) // check if the game is a draw
             {
                 Util.Print("Game Over! It's a draw!", ConsoleColor.DarkRed);
                 break;
             }
-
             // exit condition
-            turn++;
+            // check if the game is over
         }
-
     }
 
 /**
  * Gets the input on which coordinate the player would like to choose
- *
+ * <param name="input"> The input of the player </param>
+ * <param name="gameBoard"> The game board </param>
+ * <param name="currentTurn"> The current turn </param>
+ * <returns> The updated game board and the current turn </returns>
  */
-
-
-    public List<int> ValidateInput(string input, List<List<string>> gameBoard)
+    public (List<List<string>>, int currentTurn) ValidateInput(string input, List<List<string>> gameBoard, int currentTurn)
     {
-        List<int> coordinates = new List<int>();
-        char[] delimiters = { ' ', ',' , ':'};
-
+        // List<int> coordinates = new List<int>();
+        List<int> coordinates;
+        char[] delimiters = [' ', ',' , ':'];
         try
         { // https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.select?view=net-8.0
             // check if the input is valid
             coordinates = Console.ReadLine().Split(delimiters).Select(Int32.Parse).ToList();
-            if( coordinates.Count == 2 && coordinates[0] < 3 && coordinates[1] > 3 )
+            if( coordinates.Count == 2 && Util.IsWithinBounds(coordinates) && gameBoard[coordinates[0]][coordinates[1]] == UI.BLANK)
             {
-                gameBoard[coordinates[0]][coordinates[1]] = input;
-
+                gameBoard[coordinates[0]-1][coordinates[1]-1] = input;
+                return (gameBoard, currentTurn + 1); // return the updated game board and the next turn
             }
-
-
-
+            
+            // if the input is invalid then print an error message and return the game board as is 
+            Util.Print("Invalid input! Please try again.\n", ConsoleColor.DarkRed);
+            return (gameBoard, currentTurn); // return the game board as is
         }
         catch (Exception e)
         {
-            Util.Print("Invalid input. Please enter a valid input.\n", ConsoleColor.DarkRed);
-
+            Util.Print( e.ToString(), ConsoleColor.DarkRed);
+            return (gameBoard, currentTurn); // return the game board as is
         }
-
-        return null; // temporary
-    }
-
-
-
-    private static List<List<string>> InitializeGameBoard (List<string> row)
-    {
-        List<List<string>> gameBoard = [];
-        for(int i = 0; i < 3; i++ )
-        {
-            gameBoard.Add(row); // add 3 rows to the gameBoard
-        }
-        return gameBoard;
-    }
-
-    private static List<string> InitializeListString()
-    {
-        List<string> row = []; // initialize an empty list for row
-        for(int i = 0; i < 3; i++ )
-        {
-            row.Add(UI.BLANK);// add 3 blanks to the row
-        }
-
-        return row;
+        
     }
 
 }
-
-
-
-
 
 
 
@@ -133,8 +96,7 @@ internal class App
  */
 class Util
 {
-
-
+    
     /**
      * Prints a message
      * <param name="message"> The message to be printed </param>
@@ -154,6 +116,22 @@ class Util
     {
         Console.ForegroundColor = ConsoleColor.Black;
         Console.Write(message);
+    }
+    
+    /**
+     * Checks if the coordinates are within bounds
+     * <param name="coordinates"> The coordinates to be checked </param>
+     */
+    public static bool IsWithinBounds(List<int> coordinates) // helper function to check if the coordinates are within bounds
+    {
+        foreach (var coordinate in coordinates)
+        {
+            if (coordinate < 1 || coordinate > 3)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
