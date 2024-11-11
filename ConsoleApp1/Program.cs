@@ -67,7 +67,7 @@ internal class App
         { // https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.select?view=net-8.0
             // check if the input is valid
             coordinates = Console.ReadLine().Split(delimiters).Select(Int32.Parse).ToList();
-            if( coordinates.Count == 2 && Util.IsWithinBounds(coordinates) && gameBoard[coordinates[0]][coordinates[1]] == UI.BLANK)
+            if( coordinates.Count == 2 && Util.IsWithinBounds(coordinates) && gameBoard[coordinates[0]-1][coordinates[1]-1] == UI.BLANK)
             {
                 gameBoard[coordinates[0]-1][coordinates[1]-1] = input;
                 return (gameBoard, currentTurn + 1); // return the updated game board and the next turn
